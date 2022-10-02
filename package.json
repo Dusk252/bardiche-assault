@@ -1,0 +1,22 @@
+{
+  "name": "bardiche-assault",
+  "version": "1.0.0",
+  "description": "discord bot for personal server",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dusk252",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.4.0",
+    "dotenv": "^16.0.2",
+    "mongodb": "4.10",
+    "node-cron": "^3.0.2",
+    "timezone-support": "^1.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.23.1"
+  }
+}
