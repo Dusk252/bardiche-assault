@@ -24,4 +24,5 @@ client.handleCommands(client);
 client.handleComponents(client);
 
 client.login(process.env.TOKEN);
-keepAlive(client);
+(async () => client.mongoClient.connect())();
+keepAlive();

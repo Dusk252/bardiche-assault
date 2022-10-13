@@ -5,9 +5,8 @@ server.all('/', (_, res) => {
     res.send('Result: [OK]');
 });
 
-function keepAlive(client) {
+function keepAlive() {
     server.listen(3000, async () => {
-        await client.mongoClient.connect();
         console.log('Server is ready! | ' + Date.now());
     });
 }
