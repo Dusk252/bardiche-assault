@@ -1,4 +1,5 @@
 require('dotenv').config();
+const keepAlive = require('./server');
 const fs = require('fs');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { MongoClient } = require('mongodb');
@@ -23,5 +24,4 @@ client.handleCommands(client);
 client.handleComponents(client);
 
 client.login(process.env.TOKEN);
-
-(async () => client.mongoClient.connect())();
+keepAlive(client);
