@@ -16,6 +16,7 @@
     "mongodb": "4.10",
     "node-cron": "^3.0.2",
     "node-fetch": "^2.6.6",
+    "table": "^6.8.0",
     "timezone-support": "^1.1.0"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@ const { MongoClient } = require('mongodb');
 
 // create client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
-client.mongoClient = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+client.mongoClient = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, loggerLevel: 'error' });
 client.commands = new Collection();
 client.buttons = new Collection();
 client.commandArray = [];

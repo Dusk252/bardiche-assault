@@ -1,65 +1,39 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fetch = require('node-fetch');
-const validate = require('./../../helpers/validateSchema');
+const validate = require('./../../helpers/base/validateSchema');
+
+const customKeywords = [
+    {
+        keyword: 'checkFacilityCount',
+        schemaType: 'boolean',
+        code(cxt) {
+            const { data, schema } = cxt;
+            let facilityCount = {};
+            if (schema) {
+                facilityCount = Object.keys(data).reduce((prev, f) => {
+                    if (f.type === 'factory' || f.type === 'tp' || f.type === 'pp')
+                        prev.leftSide = prev.leftSide + 1;
+                    else
+                        prev[f.type] = prev[f.type] + 1;
+                    return prev;
+                }, { leftSide: 0, cc: 0, hr: 0, dorm: 0, rr: 0 });
+            }
+            cxt.fail(schema && (facilityCount.leftSide > 9 || facilityCount.cc > 1 || facilityCount.dorm > 4 || facilityCount.hr > 1 || facilityCount.rr > 1));
+        },
+    },
+];
 
 const schema = {
     type: 'object',
     properties: {
         rotationTime: { type: 'array', minItems: 1, items: { type: 'integer' } },
-        cc: { type: 'array', items: { type: 'string' } },
-        factories: { type: 'array', items: { type: 'string' } },
-        tp: { type: 'array', items: { type: 'string' } },
-        hr: { type: 'array', items: { type: 'string' } },
-        reception: { type: 'array', items: { type: 'string' } },
-        dorms: { type: 'array', items: { type: 'string' } },
+        facilities: { type: 'array', checkFacilityCount: true, items: { type: 'object', properties: {
+            rotations: { type: 'array', items: { type: 'array', items: { type: 'string' } } },
+            type: { type: 'string', enum: ['cc', 'factory', 'tp', 'rr', 'hr', 'dorm', 'pp'] },
+         } } },
     },
     required: ['rotationTime'],
     additionalProperties: false,
-};
-
-const fillBaseSchedule = async (schedule, userId, serverId, mongoClient) => {
-    const transactionOptions = {
-        readConcern: { level: 'snapshot' },
-        writeConcern: { w: 'majority' },
-        readPreference: 'primary',
-    };
-    const session = mongoClient.startSession();
-    try {
-        session.startTransaction(transactionOptions);
-        const { rotationTime, ...rawLayout } = schedule;
-        const layout = Object.keys(rawLayout).reduce((res, cur) => {
-            res[cur] = { layout: layout[cur], currentIndex: 0 };
-            return res;
-        }, {});
-        await mongoClient
-            .db()
-            .collection('base_schedule')
-            .insertOne({
-                userId,
-                serverId,
-                rotations: rotationTime,
-                currentRotationIndex: 0,
-                tracking: false,
-                nextRotation: null,
-            }, { session });
-        await mongoClient
-            .db()
-            .collection('base_layout')
-            .insertOne({
-                userId,
-                serverId,
-                layout,
-            }, { session });
-        await session.commitTransaction();
-    }
-    catch (err) {
-        console.log(err);
-        await session.abortTransaction();
-        throw 'transactionError';
-    }
-    finally {
-        await session.endSession();
-    }
 };
 
 module.exports = {
@@ -68,9 +42,12 @@ module.exports = {
 		.setDescription('Get a .json template to submit your base schedule to the bot.')
         .addAttachmentOption((option => option.setName('schedule')
             .setDescription('A .json file with the options according to the template gotten with the /getTemplate command.')
-            .setRequired(true))),
+            .setRequired(true)))
+        .addBooleanOption((option => option.setName('reset-tracking')
+            .setDescription('Sets tracking back to false and resets rotation index. Use /start-tracking to start tracking again.'))),
 	async execute(interaction, client) {
         const attachment = interaction.options.getAttachment('schedule');
+        const resetTracking = interaction.options.getBoolean('reset-tracking');
         if (!attachment || !attachment.contentType.includes('application/json'))
             await interaction.reply({ content: 'Please attach a valid .json file.', ephemeral: true });
         try {
@@ -78,20 +55,39 @@ module.exports = {
             if (res.status != 200)
                 throw 'Unexpected server response.';
             const body = await res.json();
-            const valid = validate(schema, body);
+            const valid = validate(schema, body, customKeywords);
             if (!valid)
                 await interaction.reply({ content: 'Template filled incorrectly, please recheck the instructions using the /get-template-instructions command.', ephemeral: true });
             else {
                 try {
-                    fillBaseSchedule(body, interaction.user.id, interaction.guildId, client.mongoClient);
-                    await interaction.reply({ content: 'Base schedule submitted successfully.\nOnce you have your rotation in the game use /start-track to start tracking the time with this layout.' });
+                    const { rotationTime, facilities } = body;
+                    for (const facility of facilities)
+                        facility.currentIndex = 0;
+                    const query = { userId: interaction.user.id };
+                    const update = {
+                        userId: interaction.user.id,
+                        rotations: rotationTime,
+                        layout: facilities,
+                    };
+                    if (resetTracking) {
+                        update.currentRotationIndex = 0;
+                        update.isTracking = false;
+                        update.nextRotation = null;
+                    }
+                    await client.mongoClient
+                        .db()
+                        .collection('base_schedule')
+                        .updateOne(query, update, { upsert: true });
+                    await interaction.reply({ content: 'Base schedule submitted successfully.\nOnce you have your rotation in the game use /start-track to start tracking the time with this layout.', ephemeral: true });
                 }
-                catch {
+                catch (err) {
+                    console.log(err);
                     await interaction.reply({ content: 'There was an error saving your information in the database, please try again.', ephemeral: true });
                 }
             }
         }
-        catch {
+        catch (err) {
+            console.log(err);
             await interaction.reply({ content: 'There was an error fetching your file, please try again.', ephemeral: true });
         }
 	},

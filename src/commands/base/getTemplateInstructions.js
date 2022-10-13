@@ -1,9 +1,7 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
+const createInstructionsEmbed = require('../../helpers/base/createInstructionsEmbed');
 
-const button = new ButtonBuilder()
-    .setCustomId('base_get-template-instructions')
-    .setLabel('Blank')
-    .setStyle(ButtonStyle.Primary);
+const instructionsEmbed = createInstructionsEmbed();
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -11,7 +9,7 @@ module.exports = {
 		.setDescription('Get instructions on how to fill in info when submitting your base layout.'),
 	async execute(interaction) {
         await interaction.reply({
-            components: [new ActionRowBuilder().addComponents(button)],
+            embeds: [instructionsEmbed],
             ephemeral: true,
         });
 	},
