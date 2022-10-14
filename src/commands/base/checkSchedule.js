@@ -10,6 +10,10 @@ module.exports = {
             .db()
             .collection('base_schedule')
             .findOne({ userId: interaction.user.id });
+        if (!schedule) {
+            await interaction.reply({ content: 'No base schedule set for this user yet. Use /set-schedule to set your base schedule.', ephemeral: true });
+            return;
+        }
         const scheduleEmbed = getScheduleEmbed(schedule, interaction.user);
         await interaction.reply({
             embeds: [scheduleEmbed],
