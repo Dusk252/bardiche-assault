@@ -88,7 +88,10 @@ module.exports = {
         }
         catch (err) {
             console.log(err);
-            await interaction.reply({ content: 'There was an error fetching your file, please try again.', ephemeral: true });
+            if (err.type == 'invalid-json')
+                await interaction.reply({ content: 'File incorrectly formatted. Please double check if the syntax is valid json.', ephemeral: true });
+            else
+                await interaction.reply({ content: 'There was an error fetching your file, please try again.', ephemeral: true });
         }
 	},
 };

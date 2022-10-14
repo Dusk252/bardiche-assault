@@ -35,10 +35,10 @@ module.exports = () => {
             \`\`\`"facilities": [
                 {
                     "rotations": [
-                        [ Frostleaf, Vigna, FEater ],
-                        [ Frostleaf, Conviction, FEater ],
-                        [ Frostleaf, Conviction, Vigna ],
-                        [ FEater, Conviction, Vigna ],
+                        [ "Frostleaf", "Vigna", "FEater" ],
+                        [ "Frostleaf", "Conviction", "FEater" ],
+                        [ "Frostleaf", "Conviction", "Vigna" ],
+                        [ "FEater", "Conviction", "Vigna" ],
                         etc...
                     ],
                     "type": "factory"
