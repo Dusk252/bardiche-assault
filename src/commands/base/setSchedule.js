@@ -77,7 +77,7 @@ module.exports = {
                     await client.mongoClient
                         .db()
                         .collection('base_schedule')
-                        .updateOne(query, update, { upsert: true });
+                        .updateOne(query, { '$set': { ...update } }, { upsert: true });
                     await interaction.reply({ content: 'Base schedule submitted successfully.\nOnce you have your rotation in the game use /start-track to start tracking the time with this layout.', ephemeral: true });
                 }
                 catch (err) {
