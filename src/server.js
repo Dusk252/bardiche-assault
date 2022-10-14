@@ -5,8 +5,9 @@ server.all('/', (_, res) => {
     res.send('Result: [OK]');
 });
 
-function keepAlive() {
-    server.listen(3000, () => {
+function keepAlive(client) {
+    server.listen(3000, async () => {
+        await client.mongoClient.connect();
         const date = new Date();
         console.log(`Server is ready! | ${date.toLocaleDateString()} ${date.toLocaleTimeString()}`);
     });
