@@ -21,7 +21,7 @@ module.exports = {
             .findOne({ userId: interaction.user.id });
         if (schedule) {
             if (schedule.isTracking) {
-                const collector = interaction.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
+                const collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
                 await interaction.reply({ content: `Your rotation tracking is already active with the next rotation on ${time(schedule.nextRotation)}.\n Do you want to reset your rotation schedule (tracking remainds active)?`,
                     components: [new ActionRowBuilder().addComponents(button1, button2)], ephemeral: true });
                 collector.on('collect', async i => {
