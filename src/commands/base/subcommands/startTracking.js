@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, time } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, time } = require('discord.js');
 
 const button1 = new ButtonBuilder()
     .setCustomId('base_tracking-reset')
@@ -11,7 +11,7 @@ const button2 = new ButtonBuilder()
     .setStyle(ButtonStyle.Primary);
 
 module.exports = {
-	data: new SlashCommandBuilder()
+	data: subcommand => subcommand
 		.setName('start-tracking')
 		.setDescription('Start tracking your base rotations. The bot will notify you by dm.'),
 	async execute(interaction, client) {

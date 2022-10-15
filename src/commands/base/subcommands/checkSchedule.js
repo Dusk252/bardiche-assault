@@ -1,8 +1,7 @@
-const { SlashCommandBuilder } = require('discord.js');
-const { getScheduleEmbed } = require('../../helpers/base/createRotationEmbed');
+const { getScheduleEmbed } = require('../../../helpers/base/createRotationEmbed');
 
 module.exports = {
-	data: new SlashCommandBuilder()
+	data: subcommand => subcommand
 		.setName('check-schedule')
 		.setDescription('View your base layout and schedule.'),
 	async execute(interaction, client) {

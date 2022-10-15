@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 const button1 = new ButtonBuilder()
     .setCustomId('base_get-blank-template')
@@ -11,7 +11,7 @@ const button2 = new ButtonBuilder()
     .setStyle(ButtonStyle.Primary);
 
 module.exports = {
-	data: new SlashCommandBuilder()
+	data: subcommand => subcommand
 		.setName('get-template')
 		.setDescription('Get a .json template to submit your base schedule to the bot.'),
 	async execute(interaction, client) {

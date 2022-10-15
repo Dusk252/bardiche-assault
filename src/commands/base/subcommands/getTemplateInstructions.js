@@ -1,10 +1,9 @@
-const { SlashCommandBuilder } = require('discord.js');
-const createInstructionsEmbed = require('../../helpers/base/createInstructionsEmbed');
+const createInstructionsEmbed = require('../../../helpers/base/createInstructionsEmbed');
 
 const instructionsEmbed = createInstructionsEmbed();
 
 module.exports = {
-	data: new SlashCommandBuilder()
+	data: subcommand => subcommand
 		.setName('get-template-instructions')
 		.setDescription('Get instructions on how to fill in info when submitting your base layout.'),
 	async execute(interaction) {

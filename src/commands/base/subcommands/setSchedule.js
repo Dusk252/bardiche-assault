@@ -1,6 +1,5 @@
-const { SlashCommandBuilder } = require('discord.js');
 const fetch = require('node-fetch');
-const validate = require('./../../helpers/base/validateSchema');
+const validate = require('./../../../helpers/base/validateSchema');
 
 const customKeywords = [
     {
@@ -37,7 +36,7 @@ const schema = {
 };
 
 module.exports = {
-	data: new SlashCommandBuilder()
+	data: subcommand => subcommand
 		.setName('set-schedule')
 		.setDescription('Get a .json template to submit your base schedule to the bot.')
         .addAttachmentOption((option => option.setName('schedule')
