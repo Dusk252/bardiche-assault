@@ -3,25 +3,12 @@ const { findTimeZone, getUnixTime } = require('timezone-support');
 
 const reminderIn = {
 	data: subcommand => subcommand
-		.setName('on')
-		.setDescription('Remind user on a specific date.')
-		.addIntegerOption(option => option.setName('year').setDescription('Year')
-		.setMinValue(new Date().getFullYear())
-		.setMaxValue(9999)
-		.setRequired(true))
-		.addIntegerOption(option => option.setName('month').setDescription('Month')
-		.setMinValue(1).setMaxValue(12)
-		.setRequired(true))
-		.addIntegerOption(option => option.setName('day').setDescription('Day')
-		.setMinValue(1).setMaxValue(31)
-		.setRequired(true))
-		.addIntegerOption(option => option.setName('h').setDescription('Hour (0 to 24)')
-		.setMinValue(0).setMaxValue(24)
-		.setRequired(true))
-		.addIntegerOption(option => option.setName('m').setDescription('Minutes')
-		.setMinValue(0).setMaxValue(59)
-		.setRequired(true))
-		.addStringOption(option => option.setName('content').setDescription('Text content of the reminder.').setRequired(true)),
+		.setName('in')
+		.setDescription('Remind user in x amount of time.')
+		.addStringOption(option => option.setName('content').setDescription('Text content of the reminder.').setRequired(true))
+		.addIntegerOption(option => option.setName('days').setDescription('Days'))
+		.addIntegerOption(option => option.setName('hours').setDescription('Hours'))
+		.addIntegerOption(option => option.setName('minutes').setDescription('Minutes')),
 	execute: async (interaction, client) => {
 			const days = interaction.options.getInteger('days') || 0;
 			const hours = interaction. options.getInteger('hours') || 0;
@@ -51,12 +38,25 @@ const reminderIn = {
 
 const reminderOn = {
 	data: subcommand => subcommand
-		.setName('in')
-		.setDescription('Remind user in x amount of time.')
-		.addStringOption(option => option.setName('content').setDescription('Text content of the reminder.').setRequired(true))
-		.addIntegerOption(option => option.setName('days').setDescription('Days'))
-		.addIntegerOption(option => option.setName('hours').setDescription('Hours'))
-		.addIntegerOption(option => option.setName('minutes').setDescription('Minutes')),
+		.setName('on')
+		.setDescription('Remind user on a specific date.')
+		.addIntegerOption(option => option.setName('year').setDescription('Year')
+		.setMinValue(new Date().getFullYear())
+		.setMaxValue(9999)
+		.setRequired(true))
+		.addIntegerOption(option => option.setName('month').setDescription('Month')
+		.setMinValue(1).setMaxValue(12)
+		.setRequired(true))
+		.addIntegerOption(option => option.setName('day').setDescription('Day')
+		.setMinValue(1).setMaxValue(31)
+		.setRequired(true))
+		.addIntegerOption(option => option.setName('h').setDescription('Hour (0 to 24)')
+		.setMinValue(0).setMaxValue(24)
+		.setRequired(true))
+		.addIntegerOption(option => option.setName('m').setDescription('Minutes')
+		.setMinValue(0).setMaxValue(59)
+		.setRequired(true))
+		.addStringOption(option => option.setName('content').setDescription('Text content of the reminder.').setRequired(true)),
 	execute: async (interaction, client) => {
 		const year = interaction.options.getInteger('year');
 		const month = interaction.options.getInteger('month');
