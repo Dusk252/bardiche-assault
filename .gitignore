@@ -1,3 +1,2 @@
-.env
-.env.buchan
+.env*
 node_modules

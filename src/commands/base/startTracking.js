@@ -40,11 +40,14 @@ module.exports = {
                                         'nextRotation': date,
                                         },
                                     });
-                            await interaction.update({ content: `Your rotation tracking was successfully reset.\n Next rotation on ${time(date)}.`, components: [], ephemeral: true });
+                            await interaction.editReply({ content: `Your rotation tracking was successfully reset.\n Next rotation on ${time(date)}.`, components: [], ephemeral: true });
                         }
                         else if (i.customId == 'base_tracking-reset-cancel')
-                            await interaction.update({ content: 'Your rotaition tracking remains the same.', components: [], ephemeral: true });
+                            await interaction.editReply({ content: 'No changes were made to your rotation schedule.', components: [], ephemeral: true });
                     }
+                });
+                collector.on('end', async () => {
+                    await interaction.editReply({ content: 'No changes were made to your rotation schedule.', components: [], ephemeral: true });
                 });
             }
             else {
