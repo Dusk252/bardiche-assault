@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const checkSchedule = require('./subcommands/checkSchedule');
 const getTemplate = require('./subcommands/getTemplate');
 const getTemplateInstructions = require('./subcommands/getTemplateInstructions');
+const setNextRotation = require('./subcommands/setNextRotation');
 const setSchedule = require('./subcommands/setSchedule');
 const startTracking = require('./subcommands/startTracking');
 
@@ -12,6 +13,7 @@ module.exports = {
 		.addSubcommand(checkSchedule.data)
 		.addSubcommand(getTemplate.data)
         .addSubcommand(getTemplateInstructions.data)
+		.addSubcommand(setNextRotation.data)
         .addSubcommand(setSchedule.data)
         .addSubcommand(startTracking.data),
 	async execute(interaction, client) {
@@ -25,6 +27,9 @@ module.exports = {
             case 'get-template-instructions':
                 await getTemplateInstructions.execute(interaction, client);
                 break;
+			case 'set-next-rotation':
+				await setNextRotation.execute(interaction, client);
+				break;
             case 'set-schedule':
                 await setSchedule.execute(interaction, client);
                 break;
