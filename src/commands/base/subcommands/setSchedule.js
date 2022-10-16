@@ -42,11 +42,14 @@ module.exports = {
         .addAttachmentOption((option => option.setName('schedule')
             .setDescription('A .json file with the options according to the template gotten with the /getTemplate command.')
             .setRequired(true)))
+        .addIntegerOption((option => option.setName('current-index')
+            .setDescription('Index your longest rotation is at (others will loop around). Use for small updates to your schedule.')))
         .addBooleanOption((option => option.setName('reset-tracking')
             .setDescription('Sets tracking back to false and resets rotation index. Use /start-tracking to start tracking again.'))),
 	async execute(interaction, client) {
         const attachment = interaction.options.getAttachment('schedule');
         const resetTracking = interaction.options.getBoolean('reset-tracking');
+        const currentIndex = interaction.options.getInteger('current-index');
         if (!attachment || !attachment.contentType.includes('application/json'))
             await interaction.reply({ content: 'Please attach a valid .json file.', ephemeral: true });
         try {
@@ -61,23 +64,26 @@ module.exports = {
                 try {
                     const { rotationTime, facilities } = body;
                     for (const facility of facilities)
-                        facility.currentIndex = 0;
+                        facility.currentIndex = currentIndex ? currentIndex % facility.rotations.length : 0;
                     const query = { userId: interaction.user.id };
                     const update = {
                         userId: interaction.user.id,
                         rotations: rotationTime,
                         layout: facilities,
+                        currentRotationIndex: currentIndex ? currentIndex % rotationTime.length : 0,
                     };
                     if (resetTracking) {
-                        update.currentRotationIndex = 0;
                         update.isTracking = false;
                         update.nextRotation = null;
                     }
-                    await client.mongoClient
+                   const { value } = await client.mongoClient
                         .db()
                         .collection('base_schedule')
-                        .updateOne(query, { '$set': { ...update } }, { upsert: true });
-                    await interaction.reply({ content: 'Base schedule submitted successfully.\nOnce you have your rotation in the game use /start-track to start tracking the time with this layout.', ephemeral: true });
+                        .findOneAndUpdate(query, { '$set': { ...update } }, { upsert: true, returnDocument: 'after' });
+                    if (value.isTracking)
+                        await interaction.reply({ content: 'Base schedule submitted successfully.', ephemeral: true });
+                    else
+                        await interaction.reply({ content: 'Base schedule submitted successfully.\nUse /start-track to start tracking the time with this layout.', ephemeral: true });
                 }
                 catch (err) {
                     console.log(err);
