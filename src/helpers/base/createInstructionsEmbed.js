@@ -42,7 +42,7 @@ module.exports = () => {
                         etc...
                     ],
                     "type": "factory"
-                },
+                }
               ]\`\`\``,
             inline: false,
         },

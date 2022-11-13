@@ -17,8 +17,8 @@ module.exports = {
 	async execute(interaction, client) {
         const currentSetup = await client.mongoClient
             .db()
-            .collection('base_layout')
-            .findOne({ serverId: interaction.guildId, userId: interaction.user.id });
+            .collection('base_schedule')
+            .findOne({ userId: interaction.user.id });
 
         button2.setDisabled(currentSetup == null);
 
