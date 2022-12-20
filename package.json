@@ -14,11 +14,13 @@
     "discord.js": "^14.4.0",
     "dotenv": "^16.0.2",
     "express": "^4.18.2",
+    "lodash.trimstart": "^4.5.1",
     "mongodb": "4.10",
     "node-cron": "^3.0.2",
     "node-fetch": "^2.6.6",
     "table": "^6.8.0",
-    "timezone-support": "^1.1.0"
+    "timezone-support": "^1.1.0",
+    "twitter-api-v2": "^1.12.8"
   },
   "devDependencies": {
     "eslint": "^8.23.1"
