@@ -86,7 +86,6 @@ async function showFeed(interaction, client) {
         const feedsEmbed = getTwitterFeedsTable(feeds);
         await interaction.reply({
             content: feedsEmbed,
-            ephemeral: true,
         });
         return;
     }
