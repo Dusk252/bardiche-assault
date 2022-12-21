@@ -19,6 +19,17 @@ module.exports = async (client) => {
             }
         },
     );
+    stream.on(ETwitterStreamEvent.ConnectionError, (err) =>
+        console.log('Twitter stream connection error!', err),
+    );
+    stream.on(
+        ETwitterStreamEvent.ConnectionClosed,
+        () => console.log('Twitter stream connection has been closed.'),
+    );
+    stream.on(
+        ETwitterStreamEvent.DataKeepAlive,
+        () => console.log('Twitter has a keep-alive packet.'),
+    );
     await stream.connect({ autoReconnect: true, autoReconnectRetries: Infinity });
     client.twitterClient.stream = stream;
 };
