@@ -151,20 +151,25 @@ async function deleteFeed(interaction, client) {
             return acc;
         }, {});
         const rulesToDelete = feeds.reduce((acc, cur) => {
-            if (cur.inCurrentServer && !cur.inOtherServers)
-                acc.push(rulesMap[cur._id]);
+            if (cur.inCurrentServer) {
+                acc.twitterIds.push(cur._id);
+                if (!cur.inOtherServers)
+                    acc.ruleIds.push(rulesMap[cur._id]);
+            }
             return acc;
-        }, []);
-        if (rulesToDelete.length) {
+        }, { twitterIds: [], ruleIds: [] });
+        if (rulesToDelete.ruleIds.length) {
             await client.twitterClient.appClient.v2.updateStreamRules({
                 delete: {
-                    ids: rulesToDelete,
+                    ids: rulesToDelete.ruleIds,
                 },
-        });
-        await client.mongoClient
-            .db()
-            .collection('twitter_feed')
-            .deleteMany({ twitterId: { $in: Object.keys(rulesMap) } });
+            });
+        }
+        if (rulesToDelete.twitterIds.length) {
+            await client.mongoClient
+                .db()
+                .collection('twitter_feed')
+                .deleteMany({ twitterId: { $in: rulesToDelete.twitterIds }, serverId: `${interaction.guildId}` });
         }
         await interaction.reply({ content: 'The feed was deleted successfully.', ephemeral: true });
     }
