@@ -45,15 +45,15 @@ async function createNewFeed(interaction, client) {
     if (screenName && channel) {
         try {
             const user = await client.twitterClient.appClient.v1.user({ screen_name: screenName });
-            if (user) {
-                const query = { serverId: interaction.guildId, twitterId: `${user.id}` };
-                const update = { $set: { serverId: interaction.guildId, channelId: channel.id, twitterId: `${user.id}`, twitterHandle: `${screenName}` } };
+            if (user && user.id_str) {
+                const query = { serverId: interaction.guildId, twitterId: user.id_str };
+                const update = { $set: { serverId: interaction.guildId, channelId: channel.id, twitterId: user.id_str, twitterHandle: `${screenName}` } };
                 const item = await client.mongoClient
                     .db()
                     .collection('twitter_feed')
                     .updateOne(query, update, { upsert: true });
                 await client.twitterClient.appClient.v2.updateStreamRules({
-                    add: [{ value: `from:${user.id}` }],
+                    add: [{ value: `from:${user.id_str}` }],
                 });
                 if (!client.twitterClient.stream)
                     await initializeTwitterStream(client);
@@ -96,8 +96,8 @@ async function deleteFeed(interaction, client) {
     const screenName = trimstart(interaction.options.getString('handle'), '@');
     try {
         const user = await client.twitterClient.appClient.v1.user({ screen_name: screenName });
-        const matchQuery = user && user.id ?
-            { $or: [{ twitterId: `${user.id}` }, { twitterHandle: `${screenName}` }] } :
+        const matchQuery = user && user.id_str ?
+            { $or: [{ twitterId: user.id_str }, { twitterHandle: `${screenName}` }] } :
             { twitterHandle: `${screenName}` };
         const feeds = await client.mongoClient
             .db()
@@ -158,6 +158,10 @@ async function deleteFeed(interaction, client) {
             }
             return acc;
         }, { twitterIds: [], ruleIds: [] });
+        if (!rulesToDelete.ruleIds.length && !rulesToDelete.twitterIds.length) {
+            await interaction.reply({ content: 'No such feed exists in this server.', ephemeral: true });
+            return;
+        }
         if (rulesToDelete.ruleIds.length) {
             await client.twitterClient.appClient.v2.updateStreamRules({
                 delete: {
