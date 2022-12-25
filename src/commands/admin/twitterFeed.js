@@ -33,7 +33,7 @@ module.exports = {
                 await deleteFeed(interaction, client);
                 break;
             default:
-                interaction.reply({ content: `The subcommand ${subcommand} doesn't exist.`, ephemeral: true });
+                await interaction.reply({ content: `The subcommand ${subcommand} doesn't exist.`, ephemeral: true });
                 break;
         }
 	},
