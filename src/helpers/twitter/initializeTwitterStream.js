@@ -48,7 +48,7 @@ const processTweetContent = (eventData) => {
         const { username } = eventData.includes.users.find(u => u.id === authorId);
         content = `https://twitter.com/${username}/status/${retweetId}`;
     }
-    if (eventData.data.entities.urls) {
+    if (eventData.data.entities && eventData.data.entities.urls) {
         for (const url of eventData.entities.urls) {
             if (url.url && !url.expanded_url.startsWith('https://twitter.com'))
                 content += `\n${url.url}`;
