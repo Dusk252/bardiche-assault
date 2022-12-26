@@ -47,13 +47,13 @@ const processTweetContent = (eventData) => {
     if (retweetId) {
         const { author_id : authorId } = eventData.includes.tweets.find(t => t.id && t.id === retweetId);
         const { username } = eventData.includes.users.find(u => u.id === authorId);
-        content = `https://twitter.com/${username}/status/${retweetId}`;
+        content = `Retweeted by @${eventData.includes.users[0].username}\nhttps://twitter.com/${username}/status/${retweetId}`;
     }
 
     if (eventData.data.entities && eventData.data.entities.urls) {
         for (const url of eventData.data.entities.urls) {
             if (url.url && !url.expanded_url.startsWith('https://twitter.com'))
-                content += `\n${url.url}`;
+                content += `\n${url.expanded_url}`;
         }
     }
     return content;
