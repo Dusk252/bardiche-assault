@@ -34,11 +34,10 @@ module.exports = async (client) => {
 };
 
 const processTweetContent = (eventData) => {
-    let content = `https://twitter.com/${eventData.includes.users[0].username}/status/${eventData.data.id}`;
+    let content = `https://twitter.com/${eventData.data.author_id}/status/${eventData.data.id}`;
     let retweetId = null;
 
     if (eventData.data.referenced_tweets) {
-        console.log(eventData.data.referenced_tweets);
         for (const t of eventData.data.referenced_tweets) {
             if (t.type === 'retweeted') {
                 retweetId = t.id;
@@ -47,7 +46,10 @@ const processTweetContent = (eventData) => {
         }
     }
 
-    console.log('eventData:', eventData.data);
+    if (eventData.data.in_reply_to_user_id != eventData.data.author_id)
+        return null;
+
+    console.log('retweetId:', retweetId);
     console.log('in reply to:', eventData.data.in_reply_to_user_id);
     console.log('source:', eventData.data.source);
 
