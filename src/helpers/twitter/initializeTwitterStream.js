@@ -46,12 +46,12 @@ const processTweetContent = (eventData) => {
         }
     }
 
-    if (eventData.data.in_reply_to_user_id != eventData.data.author_id)
-        return null;
-
     console.log('retweetId:', retweetId);
     console.log('in reply to:', eventData.data.in_reply_to_user_id);
     console.log('source:', eventData.data.source);
+
+    if (eventData.data.in_reply_to_user_id != eventData.data.author_id)
+        return null;
 
     if (retweetId) {
         const { author_id : authorId } = eventData.includes.tweets.find(t => t.id && t.id === retweetId);
