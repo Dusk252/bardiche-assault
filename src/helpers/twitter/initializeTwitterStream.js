@@ -13,6 +13,8 @@ module.exports = async (client) => {
             if (!feeds)
                 return;
             const content = processTweetContent(eventData);
+            if (!content)
+                return;
             for (const feed of feeds) {
                 const channel = await client.channels.fetch(feed.channelId);
                 if (channel && channel.isTextBased())
@@ -45,6 +47,7 @@ const processTweetContent = (eventData) => {
         }
     }
 
+    console.log('eventData:', eventData.data);
     console.log('in reply to:', eventData.data.in_reply_to_user_id);
     console.log('source:', eventData.data.source);
 
