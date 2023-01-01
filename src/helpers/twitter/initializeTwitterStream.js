@@ -46,6 +46,7 @@ const processTweetContent = (eventData) => {
         }
     }
 
+    console.log('authorId:', eventData.data.author_id);
     console.log('retweetId:', retweetId);
     console.log('in reply to:', eventData.data.in_reply_to_user_id);
     console.log('source:', eventData.data.source);
