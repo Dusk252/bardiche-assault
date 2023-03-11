@@ -1,7 +1,7 @@
 const Ajv = require('ajv');
-const ajv = new Ajv();
 
 module.exports = (schema, data, customKeywords) => {
+    const ajv = new Ajv();
     if (customKeywords && Array.isArray(customKeywords)) {
         for (const o of customKeywords)
             ajv.addKeyword(o);
