@@ -1,7 +1,7 @@
 const { ETwitterStreamEvent } = require('twitter-api-v2');
 
 module.exports = async (client) => {
-    const stream = client.twitterClient.appClient.v2.searchStream({ autoConnect: false, expansions: ['author_id', 'referenced_tweets.id', 'referenced_tweets.id.author_id'], 'user.fields': ['id', 'username'], 'tweet.fields': ['entities', 'referenced_tweets', 'id'] });
+    const stream = client.twitterClient.appClient.v2.searchStream({ autoConnect: false, expansions: ['author_id', 'referenced_tweets.id', 'referenced_tweets.id.author_id'], 'user.fields': ['id', 'username'], 'tweet.fields': ['entities', 'referenced_tweets', 'id', 'in_reply_to_user_id', 'source'] });
     stream.on(
         ETwitterStreamEvent.Data,
         async eventData => {
@@ -13,6 +13,8 @@ module.exports = async (client) => {
             if (!feeds)
                 return;
             const content = processTweetContent(eventData);
+            if (!content)
+                return;
             for (const feed of feeds) {
                 const channel = await client.channels.fetch(feed.channelId);
                 if (channel && channel.isTextBased())
@@ -43,6 +45,9 @@ const processTweetContent = (eventData) => {
             }
         }
     }
+
+    if (eventData.data.in_reply_to_user_id && eventData.data.in_reply_to_user_id != eventData.data.author_id)
+        return null;
 
     if (retweetId) {
         const { author_id : authorId } = eventData.includes.tweets.find(t => t.id && t.id === retweetId);
