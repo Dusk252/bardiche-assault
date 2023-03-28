@@ -18,7 +18,7 @@ module.exports = {
 		}
 		let reply = '```';
 		result.data.slice(0, res).map(d => {
-			reply += `${d.japanese[0].word} 【${d.japanese[0].reading}】\n\n`;
+			reply += `${d.slug} 【${d.japanese[0].reading}】\n\n`;
 			const partOfSpeechSet = new Set();
 			let definitionList = '';
 			for (const n in d.senses) {
@@ -26,17 +26,21 @@ module.exports = {
 				for (const p of d.senses[n].parts_of_speech)
 					partOfSpeechSet.add(p.replace(/\s\(.*?\)/g, ''));
 			}
-			reply += `(${[...partOfSpeechSet].join(', ')})\n`;
+			if (partOfSpeechSet.length > 0)
+				reply += `(${[...partOfSpeechSet].join(', ')})\n`;
 			reply += definitionList;
 			const otherForms = d.japanese.splice(1);
 			if (otherForms.length) {
 				reply += '\nOther forms:\n';
 				otherForms.map(i => {
-					reply += `${i.word} [${i.reading}], `;
+					if (i.word)
+						reply += `${i.word} [${i.reading}], `;
+					else
+						reply += `${i.reading}, `;
 				});
-				reply = reply.slice(0, -1);
+				reply = reply.slice(0, -2);
 			}
-			reply += '-----------------------\n\n';
+			reply += '\n-----------------------\n\n';
 		});
 		reply += '```';
 		await interaction.reply(reply);
