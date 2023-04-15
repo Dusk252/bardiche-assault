@@ -1,6 +1,10 @@
 const initializeTwitterStream = require('../../helpers/twitter/initializeTwitterStream');
 
 module.exports = async (client) => {
+    if (!client.twitterClient) {
+        console.log('Could not initialize twitter client.');
+        return;
+    }
     client.twitterClient.appClient = await client.twitterClient.userClient.appLogin();
     const twitterFeeds = await client.mongoClient
             .db()

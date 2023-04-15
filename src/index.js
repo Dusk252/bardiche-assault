@@ -3,13 +3,14 @@ const keepAlive = require('./server');
 const fs = require('fs');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { MongoClient } = require('mongodb');
-const { TwitterApi } = require('twitter-api-v2');
+//const { TwitterApi } = require('twitter-api-v2');
 
 // create client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
-const userClient = new TwitterApi({ appKey: process.env.TWITTER_KEY, appSecret: process.env.TWITTER_SECRET });
+//const userClient = new TwitterApi({ appKey: process.env.TWITTER_KEY, appSecret: process.env.TWITTER_SECRET });
 client.mongoClient = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, loggerLevel: 'error' });
-client.twitterClient = { userClient, appClient: null };
+//client.twitterClient = { userClient, appClient: null };
+client.twitterClient = null;
 client.commands = new Collection();
 client.buttons = new Collection();
 client.commandArray = [];
@@ -30,6 +31,6 @@ client.login(process.env.TOKEN);
 keepAlive(client);
 
 process.on('exit', async () => {
-    if (client.twitterClient.stream)
+    if (client.twitterClient?.stream)
         client.twitterClient.stream.destroy();
 });
