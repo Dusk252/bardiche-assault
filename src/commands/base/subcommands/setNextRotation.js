@@ -39,7 +39,7 @@ module.exports = {
             const userTimezone = await client.mongoClient
                 .db()
                 .collection('user_locale')
-                .findOne({ serverId: interaction.guildId, userId: interaction.user.id });
+                .findOne({ userId: interaction.user.id });
             if (!userTimezone) {
                 await interaction.reply({ content: `Please set a timezone to use as reference using the /set-timezone command.
                     \n``You only need to do this once for this server.`, ephemeral: true });

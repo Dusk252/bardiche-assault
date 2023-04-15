@@ -6,7 +6,7 @@ const choices = listTimeZones();
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('set-timezone')
-		.setDescription('Saves the preferred timezone for a user in the server.')
+		.setDescription('Saves the preferred timezone for the user. This is necessary to use the AK base commands.')
 		.addStringOption((option) => option.setName('timezone').setDescription('Timezone. Type for autocomplete.').setAutocomplete(true).setRequired(true)),
 	async autocomplete(interaction) {
 		const focusedOption = interaction.options.getFocused().toLowerCase();
@@ -18,8 +18,8 @@ module.exports = {
 		if (!choices.includes(option))
 			await interaction.reply('``Please choose a valid timezone option.``');
 		else {
-			const query = { serverId: interaction.guildId, userId: interaction.user.id };
-			const update = { $set: { serverId: interaction.guildId, userId: interaction.user.id, timezone: option } };
+			const query = { userId: interaction.user.id };
+			const update = { $set: { userId: interaction.user.id, timezone: option } };
 			await client.mongoClient
 				.db()
 				.collection('user_locale')
