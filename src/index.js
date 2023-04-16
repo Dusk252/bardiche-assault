@@ -3,34 +3,38 @@ const keepAlive = require('./server');
 const fs = require('fs');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { MongoClient } = require('mongodb');
-//const { TwitterApi } = require('twitter-api-v2');
 
 // create client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
-//const userClient = new TwitterApi({ appKey: process.env.TWITTER_KEY, appSecret: process.env.TWITTER_SECRET });
 client.mongoClient = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, loggerLevel: 'error' });
-//client.twitterClient = { userClient, appClient: null };
-client.twitterClient = null;
+
+const commandList = new Set(['base.js', 'jisho.js', 'reminder.js', 'rng.js', 'setTimezone.js']);
 client.commands = new Collection();
 client.buttons = new Collection();
 client.commandArray = [];
 
-const functionFolders = fs.readdirSync('./src/functions');
-for (const folder of functionFolders) {
-	const functionFiles = fs.readdirSync(`./src/functions/${folder}`)
-        .filter((file) => file.endsWith('.js'));
-    for (const file of functionFiles)
-        require(`./functions/${folder}/${file}`)(client);
-}
+//const clientInitializationFolder = 'functions/clients';
+const handlersFolder = 'functions/handlers';
+const toolsFolder = 'functions/tools';
 
-client.handleEvents(client);
-client.handleCommands(client);
-client.handleComponents(client);
+const initialize = (path, list) => {
+    const functionFiles = fs.readdirSync(`./src/${path}`)
+            .filter((file) => list.has(file));
+    for (const file of functionFiles)
+        require(`./${path}/${file}`)(client);
+};
+
+initialize(handlersFolder, new Set(['handleCommands.js', 'handleComponents.js', 'handleEvents.js']));
+initialize(toolsFolder, new Set(['initializeScehduler.js']));
+
+client.handleEvents();
+client.handleCommands(commandList);
+client.handleComponents();
 
 client.login(process.env.TOKEN);
 keepAlive(client);
 
 process.on('exit', async () => {
-    if (client.twitterClient?.stream)
-        client.twitterClient.stream.destroy();
+    // if (client.twitterClient?.stream)
+    //     client.twitterClient.stream.destroy();
 });
