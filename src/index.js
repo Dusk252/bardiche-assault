@@ -25,7 +25,7 @@ const initialize = (path, list) => {
 };
 
 initialize(handlersFolder, new Set(['handleCommands.js', 'handleComponents.js', 'handleEvents.js']));
-initialize(toolsFolder, new Set(['initializeScehduler.js']));
+initialize(toolsFolder, new Set(['initializeScheduler.js']));
 
 client.handleEvents();
 client.handleCommands(commandList);
