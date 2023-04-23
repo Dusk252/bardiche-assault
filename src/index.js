@@ -8,7 +8,7 @@ const { MongoClient } = require('mongodb');
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 client.mongoClient = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true, loggerLevel: 'error' });
 
-const commandList = new Set(['base.js', 'jisho.js', 'reminder.js', 'rng.js', 'setTimezone.js']);
+const commandList = new Set(['base.js', 'jisho.js', 'reminder.js', 'rng.js', 'setTimezone.js', 'dmgCalc.js', 'calc.js']);
 client.commands = new Collection();
 client.buttons = new Collection();
 client.commandArray = [];
