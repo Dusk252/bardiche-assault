@@ -3,7 +3,7 @@ const atk = require('./subcommands/atk');
 const atkInterval = require('./subcommands/atkInterval');
 const defOrRes = require('./subcommands/defOrRes');
 const dph = require('./subcommands/dph');
-// const dps = require('./subcommands/dps');
+const dps = require('./subcommands/dps');
 // const hitCount = require('./subcommands/hitCount');
 // const hitsToKill = require('./subcommands/hitsToKill');
 // const totalDmg = require('./subcommands/totalDmg');
@@ -15,8 +15,8 @@ module.exports = {
 		.addSubcommand(atk.data)
 		.addSubcommand(atkInterval.data)
         .addSubcommand(defOrRes.data)
-		.addSubcommand(dph.data),
-        // .addSubcommand(dps.data)
+		.addSubcommand(dph.data)
+        .addSubcommand(dps.data),
         // .addSubcommand(hitCount.data)
         // .addSubcommand(hitsToKill.data)
         // .addSubcommand(totalDmg.data),
@@ -34,9 +34,9 @@ module.exports = {
 			case 'dph':
 				await dph.execute(interaction, client);
 				break;
-            // case 'dps':
-            //     await dps.execute(interaction, client);
-            //     break;
+            case 'dps':
+                await dps.execute(interaction, client);
+                break;
             // case 'hitCount':
             //     await hitCount.execute(interaction, client);
             //     break;

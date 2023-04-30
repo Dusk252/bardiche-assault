@@ -5,10 +5,10 @@ module.exports = {
     data: subcommand => subcommand
         .setName('atk-interval')
         .setDescription('Calc atk interval taking into account aspd buffs and interval modifiers.')
-        .addStringOption(option => option.setName('atk-interval').setDescription('Base attack interval.')
+        .addStringOption(option => option.setName('atk-interval').setDescription('Base attack interval')
         .setRequired(true))
-        .addStringOption(option => option.setName('aspd-mod').setDescription('Aspd buffs/debuffs.'))
-        .addStringOption(option => option.setName('atk-interval-mod').setDescription('Attack interval modifiers.')),
+        .addStringOption(option => option.setName('aspd-mod').setDescription('Aspd buffs/debuffs'))
+        .addStringOption(option => option.setName('atk-interval-mod').setDescription('Attack interval modifiers')),
 	async execute(interaction) {
         const atkInterval = interaction.options.getString('atk-interval');
         const aspdMod = interaction.options.getString('aspd-mod');

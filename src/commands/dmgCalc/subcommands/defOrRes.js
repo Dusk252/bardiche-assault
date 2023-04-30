@@ -25,9 +25,9 @@ module.exports = {
 
         const results = await Promise.all([tryEval(defBuff), tryEval(flatModifier), tryEval(stageModifier), tryEval(flatStageModifier), tryEval(finalFlatModifier), tryEval(defDebuff)])
             .then((values) => ({ values, error: null }))
-            .catch((err) => ({ values: null, error: err }));
+            .catch(() => ({ values: null, error: true }));
         if (results.error) {
-            await interaction.reply({ content: results.error });
+            await interaction.reply({ content: 'One of the parameter expressions was invalid.' });
             return;
         }
         const defOrRes = calcDefOrRes(def, ...results.values);
@@ -43,6 +43,6 @@ const tryEval = (param) => new Promise((resolve, reject) => {
         resolve(value);
     }
     catch {
-        reject('One of the parameter expressions was invalid.');
+        reject();
     }
 });

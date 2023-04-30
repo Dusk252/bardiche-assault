@@ -1,6 +1,6 @@
 module.exports = {
     calcAtk: (atk, atkModifier, flatModifier, stageModifier, debuffModifier) => {
-        const totalAtk = Math.floor(atk * stageModifier) * (1 + atkModifier) + flatModifier;
+        const totalAtk = Math.floor(atk * (stageModifier == 0 ? 1 : stageModifier)) * (1 + atkModifier) + flatModifier;
         if (debuffModifier)
             return Math.floor(totalAtk * (1 + debuffModifier));
         return totalAtk;
