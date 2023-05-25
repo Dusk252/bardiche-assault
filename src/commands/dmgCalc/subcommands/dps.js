@@ -20,7 +20,8 @@ module.exports = {
         .addStringOption(option => option.setName('def-res-ignore').setDescription('Def/res ignore (%).'))
         .addStringOption(option => option.setName('flat-def-res-ignore').setDescription('Def/res ignore (flat).'))
         .addStringOption(option => option.setName('dmg-modifier').setDescription('Damage amplification, fragile, etc.'))
-        .addStringOption(option => option.setName('enemy-count').setDescription('Enemy count.')),
+        .addStringOption(option => option.setName('enemy-count').setDescription('Enemy count.'))
+        .addBooleanOption(option => option.setName('show').setDescription('Whether to show the bot reply in channel.')),
 	async execute(interaction) {
         const dmgType = interaction.options.getString('dmg-type');
         const atk = interaction.options.getString('atk');
@@ -32,6 +33,7 @@ module.exports = {
         const atkInterval = interaction.options.getString('atk-interval');
         const aspdMod = interaction.options.getString('aspd-mod');
         const atkIntervalMod = interaction.options.getString('atk-interval-mod');
+        const show = interaction.options.getBoolean('show');
 
         const dmgCalcParams = await Promise.all([tryEval(atk), tryEval(enemyDefRes), tryEval(atkModifier), tryEval(defResIgnore), tryEval(flatResDefIgnore), tryEval(dmgModifier)])
             .then((values) => ({ values, error: false }))
@@ -42,7 +44,7 @@ module.exports = {
             .catch(() => ({ values: null, error: true }));
 
         if (dmgCalcParams.error || atkIntervalParams.error) {
-            await interaction.reply({ content: 'One of the parameter expressions was invalid.' });
+            await interaction.reply({ content: 'One of the parameter expressions was invalid.', ephemeral: true });
             return;
         }
 
@@ -61,7 +63,7 @@ module.exports = {
                 content = 'Invalid dmg type.';
                 break;
         }
-        await interaction.reply({ content });
+        await interaction.reply({ content, ephemeral: show !== true });
         return;
 	},
 };

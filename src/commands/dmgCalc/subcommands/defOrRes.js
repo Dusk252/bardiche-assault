@@ -13,7 +13,8 @@ module.exports = {
         .addStringOption(option => option.setName('stage-modifier').setDescription('CC risks, CM modifiers (%).'))
         .addStringOption(option => option.setName('flat-stage-modifier').setDescription('CC risks, CM modifiers (flat).'))
         .addStringOption(option => option.setName('final-flat-modifier').setDescription('Bard buffs, Chalter s3. No examples for res.'))
-        .addStringOption(option => option.setName('debuff-modifier').setDescription('Def or res % debuff.')),
+        .addStringOption(option => option.setName('debuff-modifier').setDescription('Def or res % debuff.'))
+        .addBooleanOption(option => option.setName('show').setDescription('Whether to show the bot reply in channel.')),
 	async execute(interaction) {
         const def = interaction.options.getInteger('def-or-res');
         const defBuff = interaction.options.getString('buff-modifier');
@@ -22,16 +23,17 @@ module.exports = {
         const flatStageModifier = interaction.options.getString('flat-stage-modifier');
         const finalFlatModifier = interaction.options.getString('final-flat-modifier');
         const defDebuff = interaction.options.getString('debuff-modifier');
+        const show = interaction.options.getBoolean('show');
 
         const results = await Promise.all([tryEval(defBuff), tryEval(flatModifier), tryEval(stageModifier), tryEval(flatStageModifier), tryEval(finalFlatModifier), tryEval(defDebuff)])
             .then((values) => ({ values, error: null }))
             .catch(() => ({ values: null, error: true }));
         if (results.error) {
-            await interaction.reply({ content: 'One of the parameter expressions was invalid.' });
+            await interaction.reply({ content: 'One of the parameter expressions was invalid.', ephemeral: true });
             return;
         }
         const defOrRes = calcDefOrRes(def, ...results.values);
-        await interaction.reply({ content: `\`\`${defOrRes}\`\`` });
+        await interaction.reply({ content: `\`\`${defOrRes}\`\``, ephemeral: show !== true });
 	},
 };
 

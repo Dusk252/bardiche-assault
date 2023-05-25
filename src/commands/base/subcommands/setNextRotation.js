@@ -42,7 +42,7 @@ module.exports = {
                 .findOne({ userId: interaction.user.id });
             if (!userTimezone) {
                 await interaction.reply({ content: `Please set a timezone to use as reference using the /set-timezone command.
-                    \n``You only need to do this once for this server.`, ephemeral: true });
+                    \n``You only need to do this once.`, ephemeral: true });
                 return;
             }
             const timezone = findTimeZone(userTimezone.timezone);

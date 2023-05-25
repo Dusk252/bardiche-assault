@@ -6,14 +6,16 @@ module.exports = {
 		.setName('jisho')
 		.setDescription('Searches the definition of a word on jisho.org')
         .addStringOption(option => option.setName('word').setDescription('Word to search for.').setRequired(true))
-        .addIntegerOption(option => option.setName('results').setDescription('Number of results to return.')),
+        .addIntegerOption(option => option.setName('results').setDescription('Number of results to return.'))
+		.addBooleanOption(option => option.setName('show').setDescription('Whether to show the bot reply in channel.')),
 	async execute(interaction) {
         const word = interaction.options.getString('word');
         const res = interaction.options.getInteger('results') ?? 1;
+		const show = interaction.options.getBoolean('show');
         const jisho = new JishoAPI();
 		const result = await jisho.searchForPhrase(word);
 		if (!result || !result.meta || result.meta.status != 200) {
-			await interaction.reply('``There was an issue querying jisho. Please try again later.``');
+			await interaction.reply({ content: 'There was an issue querying jisho. Please try again later.', ephemeral: true });
 			return;
 		}
 		let reply = '```';
@@ -43,6 +45,6 @@ module.exports = {
 			reply += '\n-----------------------\n\n';
 		});
 		reply += '```';
-		await interaction.reply(reply);
+		await interaction.reply({ content: reply, ephemeral: show !== true });
 	},
 };

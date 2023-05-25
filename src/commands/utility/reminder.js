@@ -15,7 +15,7 @@ const reminderIn = {
 			const minutes = interaction.options.getInteger('minutes') || 0;
 			const content = interaction.options.getString('content');
 			if (!(minutes || hours || days)) {
-				await interaction.reply({ content: '``Please provide in how long you want to be reminded of this.``', ephemeral: true });
+				await interaction.reply({ content: 'Please provide in how long you want to be reminded of this.', ephemeral: true });
 				return;
 			}
 			else {
@@ -31,7 +31,7 @@ const reminderIn = {
 						dateTime: date,
 						content: content,
 					});
-				await interaction.reply(`\`\`Reminder set for \`\`<t:${Math.floor(date.getTime() / 1000)}>\`\`.\`\``);
+				await interaction.reply(`Reminder set for <t:${Math.floor(date.getTime() / 1000)}>.`);
 			}
 	},
 };
@@ -69,15 +69,15 @@ const reminderOn = {
 			.collection('user_locale')
 			.findOne({ userId: interaction.user.id });
 		if (!userTimezone) {
-			await interaction.reply({ content: `\`\`Please set a timezone to use as reference for your reminders using the /set-timezone command.\`\`
-				\n``You only need to do this once for this server.\`\``, ephemeral: true });
+			await interaction.reply({ content: `Please set a timezone to use as reference for your reminders using the /set-timezone command.
+				\nYou only need to do this once.`, ephemeral: true });
 			return;
 		}
 		const timezone = findTimeZone(userTimezone.timezone);
 		const time = { year, month, day, hours: h, minutes: m };
 		const date = new Date(getUnixTime(time, timezone));
 		if (date < Date.now()) {
-			await interaction.reply({ content: '``Unfortunately I can\'t timetravel yet.``', ephemeral: true });
+			await interaction.reply({ content: 'Unfortunately I can\'t timetravel yet.', ephemeral: true });
 			return;
 		}
 		await client.mongoClient
@@ -89,7 +89,7 @@ const reminderOn = {
 				dateTime: date,
 				content: content,
 			});
-		await interaction.reply(`\`\`Reminder set for \`\`<t:${Math.floor(date.getTime() / 1000)}>\`\`.\`\``);
+		await interaction.reply(`Reminder set for <t:${Math.floor(date.getTime() / 1000)}>.`);
 	},
 };
 
@@ -109,7 +109,7 @@ module.exports = {
 				await reminderOn.execute(interaction, client);
 				break;
 			default:
-				await interaction.reply({ content: '``This subcommand does not exist.``', ephemeral: true });
+				await interaction.reply({ content: 'This subcommand does not exist.', ephemeral: true });
 		}
 	},
 };

@@ -15,7 +15,8 @@ module.exports = {
         .addStringOption(option => option.setName('atk-scale-modifier').setDescription('Atk scale modifers.'))
         .addStringOption(option => option.setName('def-res-ignore').setDescription('Def/res ignore (%).'))
         .addStringOption(option => option.setName('flat-def-res-ignore').setDescription('Def/res ignore (flat).'))
-        .addStringOption(option => option.setName('dmg-modifier').setDescription('Damage amplification, fragile, etc.')),
+        .addStringOption(option => option.setName('dmg-modifier').setDescription('Damage amplification, fragile, etc.'))
+        .addBooleanOption(option => option.setName('show').setDescription('Whether to show the bot reply in channel.')),
 	async execute(interaction) {
         const dmgType = interaction.options.getString('dmg-type');
         const atk = interaction.options.getString('atk');
@@ -24,12 +25,13 @@ module.exports = {
         const defResIgnore = interaction.options.getString('def-res-ignore');
         const flatResDefIgnore = interaction.options.getString('flat-def-res-ignore');
         const dmgModifier = interaction.options.getString('dmg-modifier');
+        const show = interaction.options.getBoolean('show');
 
         const results = await Promise.all([tryEval(atk), tryEval(enemyDefRes), tryEval(atkModifier), tryEval(defResIgnore), tryEval(flatResDefIgnore), tryEval(dmgModifier)])
             .then((values) => ({ values, error: null }))
             .catch(() => ({ values: null, error: true }));
         if (results.error) {
-            await interaction.reply({ content: 'One of the parameter expressions was invalid.' });
+            await interaction.reply({ content: 'One of the parameter expressions was invalid.', ephemeral: true });
             return;
         }
 
@@ -45,7 +47,7 @@ module.exports = {
                 content = 'Invalid dmg type.';
                 break;
         }
-        await interaction.reply({ content });
+        await interaction.reply({ content, ephemeral: show !== true });
         return;
 	},
 };

@@ -16,7 +16,7 @@ module.exports = {
 	async execute(interaction, client) {
 		const option = interaction.options.getString('timezone');
 		if (!choices.includes(option))
-			await interaction.reply('``Please choose a valid timezone option.``');
+			await interaction.reply({ content: 'Please choose a valid timezone option.', ephemeral: true });
 		else {
 			const query = { userId: interaction.user.id };
 			const update = { $set: { userId: interaction.user.id, timezone: option } };
@@ -24,7 +24,7 @@ module.exports = {
 				.db()
 				.collection('user_locale')
 				.updateOne(query, update, { upsert: true });
-			await interaction.reply(`\`\`User timezone set to ${option}\`\``);
+			await interaction.reply({ content: `User timezone set to ${option}.`, ephemeral: true });
 		}
 	},
 };
