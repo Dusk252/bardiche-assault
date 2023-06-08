@@ -30,7 +30,7 @@ module.exports = (client) => {
             .find({ isTracking: true, nextRotation: { $lte: date } }).toArray();
         await Promise.allSettled(reminders.map(async (reminder) => {
             const nextRotationIndex = reminder.currentRotationIndex + 1 < reminder.rotations.length ? reminder.currentRotationIndex + 1 : 0;
-            const nextRotation = new Date(date.getTime() + reminder.rotations[nextRotationIndex] * 60 * 60000);
+            const nextRotation = new Date(new Date(reminder.nextRotation).getTime() + reminder.rotations[nextRotationIndex] * 60 * 60000);
             const user = await client.users.fetch(reminder.userId);
             const rotationEmbed = getRotationEmbed(reminder, user, nextRotation);
             const message = await client.users.send(reminder.userId, { embeds: [rotationEmbed] });
